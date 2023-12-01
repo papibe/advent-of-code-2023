@@ -26,7 +26,7 @@ def solution(filename: str) -> int:
             # check for ALL occurrences of a digit
             while index >= 0:
                 numbers[index] = v
-                index = line.find(k, index + len(k))
+                index = line.find(k, index + len(k) - 1)
 
         # check for ascii digits
         for index, char in enumerate(line):
