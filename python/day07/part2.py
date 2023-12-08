@@ -24,71 +24,23 @@ TWO_PAIRS = 3
 ONE_PAIR = 2
 HIGH_CARD = 1
 
+JOKER = "J"
+
 
 def hand_type(hand: str) -> int:
     freq = {}
-    Js = 0
+    jokers = 0
     for card in hand:
-        if card == "J":
-            Js += 1
+        if card == JOKER:
+            jokers += 1
         else:
             freq[card] = freq.get(card, 0) + 1
 
-    repeats = sorted(freq.values(), reverse=True)
+    # JJJJJ => repeats will be empty thus '+ [0]' ensures first value
+    repeats = sorted(freq.values(), reverse=True) + [0]
+    repeats[0] += jokers
 
-    if Js == 0:
-        if repeats[0] == 5:
-            return FIVE_OF_A_KIND
-        if repeats[0] == 4:
-            return FOUR_OF_A_KIND
-        if repeats[0] == 3 and repeats[1] == 2:
-            return FULL_HOUSE
-        if repeats[0] == 3:
-            return THREE_OF_A_KIND
-        if repeats[0] == 2 and repeats[1] == 2:
-            return TWO_PAIRS
-        if repeats[0] == 2:
-            return ONE_PAIR
-
-        return HIGH_CARD
-
-    if Js == 5:
-        return FIVE_OF_A_KIND
-
-    if Js == 4:
-        return FIVE_OF_A_KIND
-
-    if repeats[0] == 4 and Js == 1:
-        return FIVE_OF_A_KIND
-
-    if repeats[0] == 3 and Js == 2:
-        return FIVE_OF_A_KIND
-
-    if repeats[0] == 3 and Js == 1:
-        return FOUR_OF_A_KIND
-
-    if repeats[0] == 2 and Js == 3:
-        return FIVE_OF_A_KIND
-
-    if repeats[0] == 2 and Js == 2:
-        return FOUR_OF_A_KIND
-
-    if repeats[0] == 2 and repeats[1] == 2 and Js == 1:
-        return FULL_HOUSE
-
-    if repeats[0] == 2 and repeats[1] == 1 and Js == 1:
-        return THREE_OF_A_KIND
-
-    if Js == 3:
-        return FOUR_OF_A_KIND
-
-    if Js == 2:
-        return THREE_OF_A_KIND
-
-    if Js == 1:
-        return ONE_PAIR
-
-    raise ("whut?")
+    return repeats
 
 
 def compare_cards(hand):

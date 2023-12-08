@@ -30,22 +30,7 @@ def hand_type(hand: str) -> int:
     for card in hand:
         freq[card] = freq.get(card, 0) + 1
 
-    repeats = sorted(freq.values(), reverse=True)
-
-    if repeats[0] == 5:
-        return FIVE_OF_A_KIND
-    if repeats[0] == 4:
-        return FOUR_OF_A_KIND
-    if repeats[0] == 3 and repeats[1] == 2:
-        return FULL_HOUSE
-    if repeats[0] == 3:
-        return THREE_OF_A_KIND
-    if repeats[0] == 2 and repeats[1] == 2:
-        return TWO_PAIRS
-    if repeats[0] == 2:
-        return ONE_PAIR
-
-    return HIGH_CARD
+    return sorted(freq.values(), reverse=True)
 
 
 def compare_cards(hand):
