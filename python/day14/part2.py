@@ -1,3 +1,5 @@
+from typing import List
+
 def cycle(platform):
     # north tilt
     for row in range(1, len(platform)):
@@ -48,12 +50,12 @@ def cycle(platform):
                     )
 
 
-def hash(platform):
-    hash = 0
+def hash(platform: List[List[str]]) -> int:
+    hash: int = 0
     for row, line in enumerate(platform):
         for col, item in enumerate(line):
             if item == "O":
-                hash += row + col * len(platform[0])
+                hash |= 1 << (row + col * len(platform[0]))
     return hash
 
 
