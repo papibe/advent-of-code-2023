@@ -3,6 +3,7 @@ from collections import deque
 
 GARDEN_PLOT = "."
 
+
 def solution(filename: str, max_steps) -> int:
     with open(filename, "r") as fp:
         garden: str = fp.read().splitlines()
@@ -19,7 +20,7 @@ def solution(filename: str, max_steps) -> int:
     queue = deque([(coords, 0)])
     while queue:
         coords, steps_count = queue.popleft()
-        
+
         if steps_count == max_steps:
             break
 
@@ -36,7 +37,7 @@ def solution(filename: str, max_steps) -> int:
                         continue
                     next_coords.add((new_row, new_col))
         queue.append((next_coords, steps_count + 1))
- 
+
     return len(coords)
 
 
