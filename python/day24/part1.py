@@ -2,19 +2,23 @@ def solution(filename: str, lower, high) -> int:
     with open(filename, "r") as fp:
         data: str = fp.read().splitlines()
 
-    hails = []
+    hailstones = []
     for line in data:
         position, velocity = line.split(" @ ")
         x, y, z = position.split(", ")
-        vx, vy, vz = velocity.split(", ")
-        hails.append((int(x), int(y), int(z), int(vx), int(vy), int(vz)))
+        dx, dy, dz = velocity.split(", ")
+        hailstones.append((int(x), int(y), int(z), int(dx), int(dy), int(dz)))
 
-    counter = 0
-    for i in range(len(hails)):
-        for j in range(i + 1, len(hails)):
+    number_of_hailstones = len(hailstones)
+    intersections = 0
+    for i in range(number_of_hailstones):
+        for j in range(i + 1, number_of_hailstones):
 
-            xa, ya, za, dxa, dya, dza = hails[i]
-            xb, yb, zb, dxb, dyb, dzb = hails[j]
+            # use y = m*x + c  form to represent a line in xy plane:
+            # first line (i) ya = dxa*x + xa
+            # second line (j) yb = dxb*x + xb
+            xa, ya, _, dxa, dya, _ = hailstones[i]
+            xb, yb, _, dxb, dyb, _ = hailstones[j]
 
             ma = dya / dxa
             mb = dyb / dxb
@@ -31,10 +35,11 @@ def solution(filename: str, lower, high) -> int:
                     and (xi > xa) == (xa + dxa > xa)
                     and (xi > xb) == (xb + dxb > xb)
                 ):
-                    counter += 1
-    return counter
+                    intersections += 1
+
+    return intersections
 
 
 if __name__ == "__main__":
-    print(solution("./example.txt", 7, 27))  #
+    print(solution("./example.txt", 7, 27))  # 2
     print(solution("./input.txt", 200000000000000, 400000000000000))  # 13910
