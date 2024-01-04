@@ -1,8 +1,11 @@
-DIGITS = {'1', '2', '3', '4', '5', '6', '7', '8', '9'}
+from typing import List, Set
+
+DIGITS: Set[str] = {"1", "2", "3", "4", "5", "6", "7", "8", "9"}
+
 
 def solution(filename: str) -> int:
     with open(filename, "r") as fp:
-        data: str = fp.read().splitlines()
+        data: List[str] = fp.read().splitlines()
 
     addition: int = 0
     for line in data:
@@ -12,7 +15,7 @@ def solution(filename: str) -> int:
                 min_index = index
                 break
         # get last digit's index
-        for index in range(len(line) -1, -1, -1):
+        for index in range(len(line) - 1, -1, -1):
             if line[index] in DIGITS:
                 max_index = index
                 break
@@ -24,5 +27,5 @@ def solution(filename: str) -> int:
 
 
 if __name__ == "__main__":
-    # print(solution("./example.txt"))  # 142
+    print(solution("./example1.txt"))  # 142
     print(solution("./input.txt"))  # 54667

@@ -1,4 +1,6 @@
-DIGITS = {
+from typing import Any, Dict, List, Tuple
+
+DIGITS: Dict[str, int] = {
     "one": 1,
     "two": 2,
     "three": 3,
@@ -19,7 +21,7 @@ DIGITS = {
     "9": 9,
 }
 
-STIGID = {
+STIGID: Dict[str, int] = {
     "eno": 1,
     "owt": 2,
     "eerht": 3,
@@ -42,18 +44,18 @@ STIGID = {
 
 
 class TrieNode:
-    def __init__(self):
-        self.children = {}
-        self.is_word = False
-        self.word = ""
+    def __init__(self) -> None:
+        self.children: Dict[str, Any] = {}
+        self.is_word: bool = False
+        self.word: str = ""
 
 
 class Trie:
-    def __init__(self):
-        self.root = TrieNode()
+    def __init__(self) -> None:
+        self.root: TrieNode = TrieNode()
 
-    def insert(self, word):
-        current = self.root
+    def insert(self, word) -> None:
+        current: TrieNode = self.root
         for char in word:
             if char not in current.children:
                 current.children[char] = TrieNode()
@@ -61,8 +63,8 @@ class Trie:
         current.is_word = True
         current.word = word
 
-    def search(self, word, start, end, step):
-        current = self.root
+    def search(self, word, start, end, step) -> Tuple[bool, str]:
+        current: TrieNode = self.root
         for index in range(start, end, step):
             char = word[index]
             if char not in current.children:
@@ -85,29 +87,28 @@ def solution(filename: str) -> int:
         reverse_trie.insert(word)
 
     with open(filename, "r") as fp:
-        data: str = fp.read().splitlines()
+        data: List[str] = fp.read().splitlines()
 
     addition: int = 0
-    for _ in range(10_000):
 
-        for line in data:
-            line_len: int = len(line)
+    for line in data:
+        line_len: int = len(line)
 
-            for index in range(line_len):
-                is_word, first_digit = search_trie.search(line, index, line_len, 1)
-                if is_word:
-                    break
+        for index in range(line_len):
+            is_word, first_digit = search_trie.search(line, index, line_len, 1)
+            if is_word:
+                break
 
-            for index in range(line_len - 1, -1, -1):
-                is_word, last_digit = reverse_trie.search(line, index, -1, -1)
-                if is_word:
-                    break
+        for index in range(line_len - 1, -1, -1):
+            is_word, last_digit = reverse_trie.search(line, index, -1, -1)
+            if is_word:
+                break
 
-            addition += (DIGITS[first_digit] * 10) + STIGID[last_digit]
+        addition += (DIGITS[first_digit] * 10) + STIGID[last_digit]
 
     return addition
 
 
 if __name__ == "__main__":
-    # print(solution("./example2.txt"))  # 281
+    print(solution("./example2.txt"))  # 281
     print(solution("./input.txt"))  # 54203
