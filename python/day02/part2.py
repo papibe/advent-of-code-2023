@@ -1,26 +1,28 @@
 import re
+from typing import Dict, List, Match, Optional
 
 
 def solution(filename: str) -> int:
     with open(filename, "r") as fp:
-        data: str = fp.read().splitlines()
+        data: List[str] = fp.read().splitlines()
 
-    sum_of_powers = 0
+    sum_of_powers: int = 0
+    line_re: str = r"Game (\d+): (.*)$"
 
-    line_re = r"Game (\d+): (.*)$"
     for line in data:
-        matches = re.search(line_re, line)
+        matches: Optional[Match[str]] = re.search(line_re, line)
+        assert matches is not None
         all_sets: str = matches.group(2)
-        sets: list = all_sets.split("; ")
+        sets: List[str] = all_sets.split("; ")
 
-        max_cubes: dict = {
+        max_cubes: Dict[str, int] = {
             "red": 0,
             "green": 0,
             "blue": 0,
         }
         for cube_set in sets:
-            cubes: list = cube_set.split(", ")
-            game_cubes: dict = {}
+            cubes: List[str] = cube_set.split(", ")
+            game_cubes: Dict[str, int] = {}
 
             for cube in cubes:
                 number, color = cube.split(" ")
@@ -39,5 +41,5 @@ def solution(filename: str) -> int:
 
 
 if __name__ == "__main__":
-    # print(solution("./example.txt"))  # 2286
+    print(solution("./example.txt"))  # 2286
     print(solution("./input.txt"))  # 66909

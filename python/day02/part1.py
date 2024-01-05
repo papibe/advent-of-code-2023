@@ -1,6 +1,7 @@
 import re
+from typing import Dict, List, Match, Optional
 
-MAX_CUBES = {
+MAX_CUBES: Dict[str, int] = {
     "red": 12,
     "green": 13,
     "blue": 14,
@@ -9,20 +10,21 @@ MAX_CUBES = {
 
 def solution(filename: str) -> int:
     with open(filename, "r") as fp:
-        data: str = fp.read().splitlines()
+        data: List[str] = fp.read().splitlines()
 
     game_id_sum: int = 0
-    line_re = r"Game (\d+): (.*)$"
+    line_re: str = r"Game (\d+): (.*)$"
 
     for line in data:
-        matches = re.search(line_re, line)
+        matches: Optional[Match[str]] = re.search(line_re, line)
+        assert matches is not None
         game_number: int = int(matches.group(1))
         all_subsets: str = matches.group(2)
 
-        subsets: list = all_subsets.split("; ")
+        subsets: List[str] = all_subsets.split("; ")
         for cube_set in subsets:
-            cubes = cube_set.split(", ")
-            game_cubes = {}
+            cubes: List[str] = cube_set.split(", ")
+            game_cubes: Dict[str, int] = {}
 
             for cube in cubes:
                 number, color = cube.split(" ")
@@ -42,5 +44,5 @@ def solution(filename: str) -> int:
 
 
 if __name__ == "__main__":
-    # print(solution("./example.txt"))  # 8
+    print(solution("./example.txt"))  # 8
     print(solution("./input.txt"))  # 2156
