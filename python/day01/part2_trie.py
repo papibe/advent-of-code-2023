@@ -54,7 +54,7 @@ class Trie:
     def __init__(self) -> None:
         self.root: TrieNode = TrieNode()
 
-    def insert(self, word) -> None:
+    def insert(self, word: str) -> None:
         current: TrieNode = self.root
         for char in word:
             if char not in current.children:
@@ -63,7 +63,7 @@ class Trie:
         current.is_word = True
         current.word = word
 
-    def search(self, word, start, end, step) -> Tuple[bool, str]:
+    def search(self, word: str, start: int, end: int, step: int) -> Tuple[bool, str]:
         current: TrieNode = self.root
         for index in range(start, end, step):
             char = word[index]
