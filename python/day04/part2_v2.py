@@ -1,25 +1,25 @@
 import re
-from collections import deque
+from typing import Dict, List, Set
 
 
 def solution(filename: str) -> int:
     with open(filename, "r") as fp:
-        data: str = fp.read().splitlines()
+        data: List[str] = fp.read().splitlines()
 
-    line_regex = r"Card\s+(\d+): ([^|]*) \| ([^|]*)"
-    num_regex = r"\d+"
+    line_regex: str = r"Card\s+(\d+): ([^|]*) \| ([^|]*)"
+    num_regex: str = r"\d+"
 
-    # scratchcards_points = {}
-    scratchcards_count = {}
+    scratchcards_count: Dict[int, int] = {}
 
     for line in data:
-        match = re.search(line_regex, line)
-        card_number = int(match.group(1))
+        matches = re.search(line_regex, line)
+        assert matches is not None
+        card_number = int(matches.group(1))
 
-        wining = {n for n in re.findall(num_regex, match.group(2))}
+        wining: Set[int] = {n for n in re.findall(num_regex, matches.group(2))}
 
-        points = 0
-        for my_card in re.findall(num_regex, match.group(3)):
+        points: int = 0
+        for my_card in re.findall(num_regex, matches.group(3)):
             if my_card in wining:
                 points += 1
 
