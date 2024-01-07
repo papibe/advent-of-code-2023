@@ -2,43 +2,34 @@
 # working draft. will clean up
 #
 import re
+from typing import Dict, List
 
 
-def proc_range(almanac, intervals):
-    rule_n = -1
+def proc_range(
+    almanac: Dict[int, List[Dict[str, int]]], intervals: List[List[int]]
+) -> List[List[int]]:
+    rule_n: int = -1
     for _, lor in almanac.items():
         rule_n += 1
-        rule_output = []
+        rule_output: List[List[int]] = []
         while intervals:
-            print(f"{intervals = }")
             a, b = intervals.pop()
-            apply_rule = -1
+            apply_rule: int = -1
             for rn, rule_d in enumerate(lor):
-                # print(f"{(a, b) = }")
-                # print(f"{intervals = }")
                 c, d = rule_d["start"], rule_d["end"]
 
                 if b < c or d < a:
-                    # rule_output.append([a, b])
                     continue
                 apply_rule = rn
-                # break
 
-                # if apply_rule == -1:
-                #     rule_output.append([a, b])
-                #     # break
-                #     continue
-
-                print(f"applying rule {rule_n}->{apply_rule}")
                 c, d = lor[apply_rule]["start"], lor[apply_rule]["end"]
 
-                i_s = max(a, c)
-                i_e = min(b, d)
+                i_s: int = max(a, c)
+                i_e: int = min(b, d)
 
                 if i_s < i_e:
                     t_s = lor[apply_rule]["trans"] + i_s - lor[apply_rule]["start"]
                     t_e = lor[apply_rule]["trans"] + i_e - lor[apply_rule]["start"]
-                    print(f"{rule_n = }, {(i_s, i_e) = } -> {(t_s, t_e) = }")
                     rule_output.append([t_s, t_e])
 
                     if i_s > a:
@@ -49,7 +40,6 @@ def proc_range(almanac, intervals):
             else:
                 rule_output.append([a, b])
 
-            # end of rule
         intervals = rule_output
 
     return intervals
@@ -59,50 +49,43 @@ def solution(filename: str) -> int:
     with open(filename, "r") as fp:
         data: str = fp.read()
 
-    num_regex = r"\d+"
+    num_regex: str = r"\d+"
 
-    blocks = data.split("\n\n")
-    seeds = [int(str_n) for str_n in re.findall(num_regex, blocks[0].splitlines()[0])]
-    # print(seeds)
+    blocks: List[str] = data.split("\n\n")
+    seeds: List[int] = [
+        int(str_n) for str_n in re.findall(num_regex, blocks[0].splitlines()[0])
+    ]
 
-    almanac = {}
+    almanac: Dict[int, List[Dict[str, int]]] = {}
 
     for map_number, block in enumerate(data.split("\n\n")[1:]):
-        # almanac[map_number] =
-        list_of_ranges = []
+        list_of_ranges: List[Dict[str, int]] = []
         for line in block.splitlines()[1:]:
             numbers = [
                 int(str_n) for str_n in re.findall(num_regex, line.splitlines()[0])
             ]
-            d = {}
+            d: Dict[str, int] = {}
             d["start"] = numbers[1]
             d["len_"] = numbers[2]
-            # d["end"] = numbers[1] + numbers[2] - 1
             d["end"] = numbers[1] + numbers[2]
             d["trans"] = numbers[0]
             list_of_ranges.append(d)
         almanac[map_number] = list_of_ranges
 
-    seed_intervals = []
+    seed_intervals: List[List[int]] = []
     for index, seed_start in enumerate(seeds):
         if index % 2 != 0:
             continue
         seed_intervals.append([seed_start, seed_start + seeds[index + 1]])
 
-    # print(seed_intervals)
-
-    results = []
+    results: List[List[int]] = []
     for (start, end) in seed_intervals:
-        # result = proc_range(almanac, [[82, 83]])
         result = proc_range(almanac, [[start, end]])
         results.extend(result)
-        # break
 
-    print("=" * 60)
-    print(results)
     return min([value for (value, _) in results])
 
 
 if __name__ == "__main__":
-    # print(solution("./example.txt"))  # 46
-    print(solution("./input.txt"))  # to high 7623322 7623321 7623319
+    print(solution("./example.txt"))  # 46
+    print(solution("./input.txt"))  # 6082852
