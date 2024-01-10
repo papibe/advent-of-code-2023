@@ -1,6 +1,9 @@
-import re
+from typing import Dict, List, Tuple
 
-CARD_VALUES = {
+comparing_hand = Tuple[List[int], str, int]
+ranked_hand = Tuple[List[int], int, int, int, int, int]
+
+CARD_VALUES: Dict[str, int] = {
     "A": 14,
     "K": 13,
     "Q": 12,
@@ -16,20 +19,20 @@ CARD_VALUES = {
     "2": 2,
 }
 
-FIVE_OF_A_KIND = 7
-FOUR_OF_A_KIND = 6
-FULL_HOUSE = 5
-THREE_OF_A_KIND = 4
-TWO_PAIRS = 3
-ONE_PAIR = 2
-HIGH_CARD = 1
+FIVE_OF_A_KIND: int = 7
+FOUR_OF_A_KIND: int = 6
+FULL_HOUSE: int = 5
+THREE_OF_A_KIND: int = 4
+TWO_PAIRS: int = 3
+ONE_PAIR: int = 2
+HIGH_CARD: int = 1
 
-JOKER = "J"
+JOKER: str = "J"
 
 
-def hand_type(hand: str) -> int:
-    freq = {}
-    jokers = 0
+def hand_type(hand: str) -> List[int]:
+    freq: Dict[str, int] = {}
+    jokers: int = 0
     for card in hand:
         if card == JOKER:
             jokers += 1
@@ -43,29 +46,29 @@ def hand_type(hand: str) -> int:
     return repeats
 
 
-def compare_cards(hand):
-    list_of_values = [hand[0]]
+def compare_cards(hand: comparing_hand) -> List[int]:
+    list_of_values: List[int] = []
     for card in hand[1]:
         list_of_values.append(CARD_VALUES[card])
-    return list_of_values
+    return [*hand[0], *list_of_values]
 
 
 def solution(filename: str) -> int:
     with open(filename, "r") as fp:
-        data: str = fp.read().splitlines()
+        data: List[str] = fp.read().splitlines()
 
-    list_of_cards = []
+    list_of_cards: List[comparing_hand] = []
     for line in data:
         hand, bet = line.split(" ")
-        list_of_cards.append([hand_type(hand), hand, int(bet)])
+        list_of_cards.append((hand_type(hand), hand, int(bet)))
 
-    ranked_hands = sorted(list_of_cards, key=compare_cards)
+    ranked_hands: List[comparing_hand] = sorted(list_of_cards, key=compare_cards)
 
-    total_winnings = 0
-    index = 0
-    for _, _, bet in ranked_hands:
+    total_winnings: int = 0
+    index: int = 0
+    for _, _, bet_ in ranked_hands:
         index += 1
-        total_winnings += index * bet
+        total_winnings += index * bet_
 
     return total_winnings
 
