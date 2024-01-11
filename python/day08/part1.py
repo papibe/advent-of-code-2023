@@ -1,22 +1,24 @@
 import re
+from typing import Dict, List, Match
 
 
 def solution(filename: str) -> int:
     with open(filename, "r") as fp:
-        data: str = fp.read().splitlines()
+        data: List[str] = fp.read().splitlines()
 
-    directions = data[0]
-    regex = r"(\w+) = \((\w+), (\w+)\)"
+    directions: str = data[0]
+    regex: str = r"(\w+) = \((\w+), (\w+)\)"
 
-    network = {}
+    network: Dict[str, Dict[str, str]] = {}
 
     for line in data[2:]:
-        match = re.search(regex, line)
-        network[match.group(1)] = {"L": match.group(2), "R": match.group(3)}
+        matches: Match[str] | None = re.search(regex, line)
+        assert matches is not None
+        network[matches.group(1)] = {"L": matches.group(2), "R": matches.group(3)}
 
-    position = "AAA"
-    index = 0
-    counter = 0
+    position: str = "AAA"
+    index: int = 0
+    counter: int = 0
 
     while position != "ZZZ":
         position = network[position][directions[index]]
