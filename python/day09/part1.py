@@ -1,20 +1,23 @@
+from typing import List
+
+
 def solution(filename: str) -> int:
     with open(filename, "r") as fp:
-        data: str = fp.read().splitlines()
+        data: List[str] = fp.read().splitlines()
 
-    sequences = []
+    sequences: List[List[int]] = []
     for line in data:
-        int_seq = [int(n) for n in line.split(" ")]
+        int_seq: List[int] = [int(n) for n in line.split(" ")]
         sequences.append(int_seq)
 
-    total_sum = 0
+    total_sum: int = 0
 
     for sequence in sequences:
-        triangle = [sequence]
+        triangle: List[List[int]] = [sequence]
 
-        prev_row = triangle[-1]
+        prev_row: List[int] = triangle[-1]
         while any(n != 0 for n in prev_row):
-            next_row = [0] * (len(prev_row) - 1)
+            next_row: List[int] = [0] * (len(prev_row) - 1)
             for i in range(len(prev_row) - 1):
                 next_row[i] = prev_row[i + 1] - prev_row[i]
             triangle.append(next_row)

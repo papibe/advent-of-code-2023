@@ -1,23 +1,24 @@
 from collections import deque
+from typing import Deque, List
 
 
 def solution(filename: str) -> int:
     with open(filename, "r") as fp:
-        data: str = fp.read().splitlines()
+        data: List[str] = fp.read().splitlines()
 
-    sequences = []
+    sequences: List[Deque[int]] = []
     for line in data:
-        int_seq = [int(n) for n in line.split(" ")]
+        int_seq: List[int] = [int(n) for n in line.split(" ")]
         sequences.append(deque(int_seq))
 
-    total_sum = 0
+    total_sum: int = 0
 
     for sequence in sequences:
-        triangle = [sequence]
+        triangle: List[Deque[int]] = [sequence]
 
-        prev_row = triangle[-1]
+        prev_row: Deque[int] = triangle[-1]
         while any(n != 0 for n in prev_row):
-            next_row = deque([0] * (len(prev_row) - 1))
+            next_row: Deque[int] = deque([0] * (len(prev_row) - 1))
             for i in range(len(prev_row) - 1):
                 next_row[i] = prev_row[i + 1] - prev_row[i]
             triangle.append(next_row)
