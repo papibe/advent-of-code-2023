@@ -1,32 +1,38 @@
+from typing import List
+
+SPACE: str = "."
+GALAXY: str = "#"
+
+
 def solution(filename: str, expanding_factor: int) -> int:
     with open(filename, "r") as fp:
-        data: str = fp.read().splitlines()
+        data: List[str] = fp.read().splitlines()
 
-    galaxies = []
+    galaxies: List[List[int]] = []
     for row, line in enumerate(data):
         for col, char in enumerate(line):
-            if char == "#":
+            if char == GALAXY:
                 galaxies.append([row, col])
 
-    expanding_rows = []
+    expanding_rows: List[int] = []
     for row, line in enumerate(data):
         for char in line:
-            if char != ".":
+            if char != SPACE:
                 break
         else:
             expanding_rows.append(row)
 
-    expanding_cols = []
+    expanding_cols: List[int] = []
     for col in range(len(data[0])):
         for row in range(len(data)):
-            if data[row][col] != ".":
+            if data[row][col] != SPACE:
                 break
         else:
             expanding_cols.append(col)
 
     # expand rows
     while expanding_rows:
-        expanding_row = expanding_rows.pop()
+        expanding_row: int = expanding_rows.pop()
         for index, (row, col) in enumerate(galaxies):
             if row > expanding_row:
                 galaxies[index][0] += expanding_factor - 1
@@ -36,7 +42,7 @@ def solution(filename: str, expanding_factor: int) -> int:
 
     # expand cols
     while expanding_cols:
-        expanding_col = expanding_cols.pop()
+        expanding_col: int = expanding_cols.pop()
         for index, (row, col) in enumerate(galaxies):
             if col > expanding_col:
                 galaxies[index][1] += expanding_factor - 1
@@ -44,7 +50,7 @@ def solution(filename: str, expanding_factor: int) -> int:
             if expanding_cols[i] > expanding_col:
                 expanding_cols[i] += expanding_factor - 1
 
-    total_sum = 0
+    total_sum: int = 0
     for i in range(len(galaxies)):
         for j in range(i + 1, len(galaxies)):
             total_sum += abs(galaxies[i][0] - galaxies[j][0]) + abs(
