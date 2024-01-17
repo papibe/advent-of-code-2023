@@ -1,9 +1,12 @@
-def check(spring, numbers):
-    memo = {}
+from typing import Dict, List, Tuple
 
-    def _check(current_size, index, nindex):
 
-        key = (current_size, index, nindex)
+def check(spring: str, numbers: List[int]) -> int:
+    memo: Dict[Tuple[int, int, int], int] = {}
+
+    def _check(current_size: int, index: int, nindex: int) -> int:
+
+        key: Tuple[int, int, int] = (current_size, index, nindex)
         if key in memo:
             return memo[key]
 
@@ -13,7 +16,7 @@ def check(spring, numbers):
             else:
                 return 0
 
-        result = 0
+        result: int = 0
         if spring[index] == "#":
             result += _check(current_size + 1, index + 1, nindex)
 
@@ -50,19 +53,18 @@ def check(spring, numbers):
 
 def solution(filename: str) -> int:
     with open(filename, "r") as fp:
-        data: str = fp.read().splitlines()
+        data: List[str] = fp.read().splitlines()
 
-    total_sum = 0
+    total_sum: int = 0
     for line in data:
         springs, numbers_str = line.split(" ")
-        numbers = [int(n) for n in numbers_str.split(",")]
+        numbers: List[int] = [int(n) for n in numbers_str.split(",")]
 
-        res = check(springs + ".", numbers)
-        total_sum += res
+        total_sum += check(springs + ".", numbers)
 
     return total_sum
 
 
 if __name__ == "__main__":
-    # print(solution("./example.txt"))  # 21
+    print(solution("./example.txt"))  # 21
     print(solution("./input.txt"))  # 7490

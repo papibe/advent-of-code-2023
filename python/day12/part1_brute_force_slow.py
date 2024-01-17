@@ -1,12 +1,11 @@
-import re
-from collections import deque
+from typing import List
 
 
-def count(spring):
+def count(spring: List[str]) -> List[int]:
 
-    counter = 0
-    result = []
-    index = 0
+    counter: int = 0
+    result: List[int] = []
+    index: int = 0
     while index < len(spring):
         while index < len(spring) and spring[index] == ".":
             index += 1
@@ -21,7 +20,7 @@ def count(spring):
     return result
 
 
-def equal(s, t):
+def equal(s: List[int], t: List[int]) -> bool:
     if len(s) != len(t):
         return False
     for i in range(len(s)):
@@ -30,8 +29,8 @@ def equal(s, t):
     return True
 
 
-def check(spring, numbers):
-    def _check(index, possible):
+def check(spring: str, numbers: List[int]) -> int:
+    def _check(index: int, possible: List[str]) -> int:
         if index >= len(spring):
             if equal(count(possible), numbers):
                 return 1
@@ -61,19 +60,18 @@ def check(spring, numbers):
 
 def solution(filename: str) -> int:
     with open(filename, "r") as fp:
-        data: str = fp.read().splitlines()
+        data: List[str] = fp.read().splitlines()
 
-    total_sum = 0
+    total_sum: int = 0
     for line in data:
         springs, numbers_str = line.split(" ")
-        numbers = [int(n) for n in numbers_str.split(",")]
+        numbers: List[int] = [int(n) for n in numbers_str.split(",")]
 
-        res = check(springs, numbers)
-        total_sum += res
+        total_sum += check(springs, numbers)
 
     return total_sum
 
 
 if __name__ == "__main__":
-    # print(solution("./example.txt"))  # 21
-    print(solution("./input.txt"))  # 7490
+    print(solution("./example.txt"))  # 21
+    # print(solution("./input.txt"))  # 7490
