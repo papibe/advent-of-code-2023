@@ -1,7 +1,10 @@
-def get_vertical_reflection(pattern):
+from typing import List
+
+
+def get_vertical_reflection(pattern: List[str]) -> int:
     for col in range(len(pattern[0]) - 1):
-        left = col
-        right = col + 1
+        left: int = col
+        right: int = col + 1
         while left >= 0 and right < len(pattern[0]):
             for row in range(len(pattern)):
                 if pattern[row][left] != pattern[row][right]:
@@ -13,14 +16,13 @@ def get_vertical_reflection(pattern):
             break
         else:
             return col + 1
+    return 0
 
-    return None
 
-
-def get_horizontal_reflection(pattern):
+def get_horizontal_reflection(pattern: List[str]) -> int:
     for row in range(len(pattern) - 1):
-        up = row
-        down = row + 1
+        up: int = row
+        down: int = row + 1
         while up >= 0 and down < len(pattern):
             for col in range(len(pattern[0])):
                 if pattern[up][col] != pattern[down][col]:
@@ -32,27 +34,24 @@ def get_horizontal_reflection(pattern):
             break
         else:
             return row + 1
-
-    return None
+    return 0
 
 
 def solution(filename: str) -> int:
     with open(filename, "r") as fp:
-        patterns: str = fp.read().split("\n\n")
+        patterns: List[str] = fp.read().split("\n\n")
 
-    total_sum = 0
+    total_sum: int = 0
     for raw_pattern in patterns:
-        pattern = raw_pattern.splitlines()
+        pattern: List[str] = raw_pattern.splitlines()
 
         # check vertical reflection
         col = get_vertical_reflection(pattern)
-        if col is not None:
-            total_sum += col
+        total_sum += col
 
         # check horizontal reflection
         row = get_horizontal_reflection(pattern)
-        if row is not None:
-            total_sum += row * 100
+        total_sum += row * 100
 
     return total_sum
 
