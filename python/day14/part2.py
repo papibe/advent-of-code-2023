@@ -1,6 +1,7 @@
-from typing import List
+from typing import Dict, List
 
-def cycle(platform):
+
+def cycle(platform: List[List[str]]) -> None:
     # north tilt
     for row in range(1, len(platform)):
         for col in range(len(platform[0])):
@@ -61,14 +62,14 @@ def hash(platform: List[List[str]]) -> int:
 
 def solution(filename: str) -> int:
     with open(filename, "r") as fp:
-        data: str = fp.read().splitlines()
+        data: List[str] = fp.read().splitlines()
 
-    platform = []
+    platform: List[List[str]] = []
     for line in data:
         platform.append([char for char in line])
 
-    goal = 1000000000
-    seen = {}
+    goal: int = 1000000000
+    seen: Dict[int, int] = {}
     for index in range(goal):
         key = hash(platform)
         if key in seen:
@@ -76,15 +77,14 @@ def solution(filename: str) -> int:
         seen[key] = index
         cycle(platform)
 
-    prefix = seen[key]
-    rock_cycle = index - prefix
-    times = (goal - prefix) // rock_cycle
-    actual_cycle = (goal - prefix) % rock_cycle
+    prefix: int = seen[key]
+    rock_cycle: int = index - prefix
+    actual_cycle: int = (goal - prefix) % rock_cycle
 
     for _ in range(actual_cycle):
         cycle(platform)
 
-    total_load = 0
+    total_load: int = 0
     for row in range(len(platform)):
         for col in range(len(platform[0])):
             if platform[row][col] == "O":

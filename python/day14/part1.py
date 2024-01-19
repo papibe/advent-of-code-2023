@@ -1,17 +1,20 @@
+from typing import List
+
+
 def solution(filename: str) -> int:
     with open(filename, "r") as fp:
-        data: str = fp.read().splitlines()
+        data: List[str] = fp.read().splitlines()
 
-    platform = []
+    platform: List[List[str]] = []
     for line in data:
         platform.append([char for char in line])
 
     # tilt
     for row in range(1, len(platform)):
         for col in range(len(platform[0])):
-            item = platform[row][col]
+            item: str = platform[row][col]
             if item == "O":
-                rock_row = row
+                rock_row: int = row
                 for rock_row in range(row - 1, -1, -1):
                     if platform[rock_row][col] in ["O", "#"]:
                         break
@@ -20,7 +23,7 @@ def solution(filename: str) -> int:
                         platform[rock_row + 1][col],
                         platform[rock_row][col],
                     )
-    total_load = 0
+    total_load: int = 0
     for row in range(len(platform)):
         for col in range(len(platform[0])):
             if platform[row][col] == "O":
