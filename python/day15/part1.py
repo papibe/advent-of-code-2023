@@ -2,9 +2,9 @@ def solution(filename: str) -> int:
     with open(filename, "r") as fp:
         data: str = fp.read().splitlines()[0]
 
-    total_sum = 0
+    total_sum: int = 0
     for sequence in data.split(","):
-        ascii_value = 0
+        ascii_value: int = 0
         for char in sequence:
             ascii_value += ord(char)
             ascii_value *= 17

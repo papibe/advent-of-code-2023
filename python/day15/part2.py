@@ -1,13 +1,16 @@
+from typing import Dict, List
+
+
 def solution(filename: str) -> int:
     with open(filename, "r") as fp:
         data: str = fp.read().splitlines()[0]
 
-    box = [{} for _ in range(256)]
+    box: List[Dict[str, int]] = [{} for _ in range(256)]
 
     for seq in data.split(","):
-        value = 0
+        value: int = 0
         if seq.endswith("-"):
-            label = seq[:-1]
+            label: str = seq[:-1]
             for char in label:
                 value += ord(char)
                 value *= 17
@@ -18,7 +21,7 @@ def solution(filename: str) -> int:
                 del box[value][label]
 
         else:
-            lens = int(seq[-1])
+            lens: int = int(seq[-1])
             label = seq[:-2]
             for char in label:
                 value += ord(char)
@@ -31,10 +34,10 @@ def solution(filename: str) -> int:
             else:
                 box[value][label] = lens
 
-    total = 0
+    total: int = 0
     for index, label_lens in enumerate(box):
         if label_lens:
-            slot = 1
+            slot: int = 1
             for label, lens in label_lens.items():
                 value = (index + 1) * slot * lens
                 total += value
