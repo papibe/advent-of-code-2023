@@ -1,11 +1,15 @@
 from collections import deque
+from typing import Deque, Dict, List, Set, Tuple
 
-RIGHT = (0, 1)
-LEFT = (0, -1)
-UP = (-1, 0)
-DOWN = (1, 0)
+Direction = Tuple[int, int]
+Position = Tuple[int, int]
 
-RULES = {
+RIGHT: Direction = (0, 1)
+LEFT: Direction = (0, -1)
+UP: Direction = (-1, 0)
+DOWN: Direction = (1, 0)
+
+RULES: Dict[Direction, Dict[str, List[Direction]]] = {
     RIGHT: {
         ".": [RIGHT],
         "/": [UP],
@@ -39,9 +43,9 @@ RULES = {
 
 def solution(filename: str) -> int:
     with open(filename, "r") as fp:
-        contraption: str = fp.read().splitlines()
+        contraption: List[str] = fp.read().splitlines()
 
-    max_energy = 0
+    max_energy: int = 0
     for col in range(len(contraption[0])):
         max_energy = max(max_energy, solve(contraption, (0, col), DOWN))
         max_energy = max(
@@ -57,21 +61,21 @@ def solution(filename: str) -> int:
     return max_energy
 
 
-def solve(contraption, position, direction) -> int:
+def solve(contraption: List[str], position: Position, direction: Direction) -> int:
 
-    visited = set()
-    queue = deque([(position, direction)])
-    energized = set()
+    visited: Set[Tuple[Position, Direction]] = set()
+    queue: Deque[Tuple[Position, Direction]] = deque([(position, direction)])
+    energized: Set[Position] = set()
     while queue:
         pos, direction = queue.popleft()
         energized.add(pos)
 
-        cell = contraption[pos[0]][pos[1]]
+        cell: str = contraption[pos[0]][pos[1]]
 
-        next_directions = RULES[direction][cell]
+        next_directions: List[Direction] = RULES[direction][cell]
 
         for dir in next_directions:
-            new_pos = (pos[0] + dir[0], pos[1] + dir[1])
+            new_pos: Direction = (pos[0] + dir[0], pos[1] + dir[1])
             if (
                 0 <= new_pos[0] < len(contraption)
                 and 0 <= new_pos[1] < len(contraption[0])
