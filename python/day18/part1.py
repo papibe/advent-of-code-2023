@@ -1,8 +1,8 @@
 import re
 from collections import deque
+from typing import Deque, Dict, List, Match, Optional, Set, Tuple
 
-
-STEPS = {
+STEPS: Dict[str, Tuple[int, int]] = {
     "R": (0, 1),
     "L": (0, -1),
     "U": (-1, 0),
@@ -12,49 +12,50 @@ STEPS = {
 
 def solution(filename: str) -> int:
     with open(filename, "r") as fp:
-        data: str = fp.read().splitlines()
+        data: List[str] = fp.read().splitlines()
 
-    regex = r"(\w+) (\w+) \(#(\w+)\)"
+    regex: str = r"(\w+) (\w+) \(#(\w+)\)"
 
     row, col = (0, 0)
-    edges = set([(0, 0)])
+    edges: Set[Tuple[int, int]] = set([(0, 0)])
 
     for line in data:
-        match = re.search(regex, line)
+        matches: Optional[Match[str]] = re.search(regex, line)
 
-        direction = match.group(1)
-        amount = int(match.group(2))
-        color = match.group(3)
+        assert matches is not None
+        direction: str = matches.group(1)
+        amount: int = int(matches.group(2))
+        # color: str = matches.group(3)
 
         for step in range(amount):
             row += STEPS[direction][0]
             col += STEPS[direction][1]
             edges.add((row, col))
 
-    min_row = float("inf")
-    max_row = float("-inf")
-    min_col = float("inf")
-    max_col = float("-inf")
+    min_row: int = float("inf")  # type: ignore
+    max_row: int = float("-inf")  # type: ignore
+    min_col: int = float("inf")  # type: ignore
+    max_col: int = float("-inf")  # type: ignore
     for (row, col) in edges:
         min_row = min(min_row, row)
         max_row = max(max_row, row)
         min_col = min(min_col, col)
         max_col = max(max_col, col)
 
-    inside = set()
+    inside: Set[Tuple[int, int]] = set()
 
-    queue = deque([(1, 1, 0)])
-    visited = set([(1, 1)])
+    queue: Deque[Tuple[int, int, int]] = deque([(1, 1, 0)])
+    visited: Set[Tuple[int, int]] = set([(1, 1)])
     while queue:
         row, col, count = queue.popleft()
         inside.add((row, col))
 
         # RIGHT, LEFT, UP, DOWN
-        steps = [(0, 1), (0, -1), (-1, 0), (1, 0)]
+        steps: List[Tuple[int, int]] = [(0, 1), (0, -1), (-1, 0), (1, 0)]
 
         for step_row, step_col in steps:
-            new_row = row + step_row
-            new_col = col + step_col
+            new_row: int = row + step_row
+            new_col: int = col + step_col
 
             if min_row <= new_row <= max_row and min_col <= new_col <= max_col:
 
