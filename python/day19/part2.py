@@ -1,50 +1,67 @@
 import re
 from collections import deque
 from copy import deepcopy
+from typing import Deque, Dict, List, Match, Optional, Tuple
+
+
+class Workflow:
+    def __init__(self) -> None:
+        self.rules: List[Rule] = []
+        self.final: str = ""
+
+
+class Rule:
+    def __init__(self, attr: str, comp: str, value: int, workflow: str) -> None:
+        self.attr: str = attr
+        self.comp: str = comp
+        self.value: int = value
+        self.workflow: str = workflow
+
+    def values(self) -> Tuple[str, str, int, str]:
+        return (self.attr, self.comp, self.value, self.workflow)
+
+
+Parts = Dict[str, List[int]]
 
 
 def solution(filename: str) -> int:
     with open(filename, "r") as fp:
-        blocks: str = fp.read().split("\n\n")
+        blocks: List[str] = fp.read().split("\n\n")
 
-    workflows_str = blocks[0].splitlines()
-    workflows = {}
+    workflows_str: List[str] = blocks[0].splitlines()
+    workflows: Dict[str, Workflow] = {}
 
-    wf_regex = r"(\w+){(.*)}"
-    rule_regex = r"(\w)([><])(\d+):(\w+)"
+    wf_regex: str = r"(\w+){(.*)}"
+    rule_regex: str = r"(\w)([><])(\d+):(\w+)"
 
     # parse rules
     for line in workflows_str:
-        match = re.search(wf_regex, line)
-        name = match.group(1)
-        rules = match.group(2).split(",")
-        workflows[name] = {"rules": [], "finally": ""}
+        matches: Optional[Match[str]] = re.search(wf_regex, line)
+
+        assert matches is not None
+        name: str = matches.group(1)
+        rules: List[str] = matches.group(2).split(",")
+        workflows[name] = Workflow()
 
         for rule in rules:
-            match = re.search(rule_regex, rule)
-            if match:
-                attr = match.group(1)
-                comp = match.group(2)
-                value = int(match.group(3))
-                wf = match.group(4)
-                workflows[name]["rules"].append(
-                    {
-                        "attr": attr,
-                        "comp": comp,
-                        "value": value,
-                        "workflow": wf,
-                    }
-                )
-            else:
-                workflows[name]["finally"] = rule
+            matches = re.search(rule_regex, rule)
+            if matches:
+                attr: str = matches.group(1)
+                comp: str = matches.group(2)
+                value: int = int(matches.group(3))
+                workflow: str = matches.group(4)
 
-    part = {
+                workflows[name].rules.append(Rule(attr, comp, value, workflow))
+            else:
+                workflows[name].final = rule
+
+    part: Parts = {
         "x": [1, 4000],
         "m": [1, 4000],
         "a": [1, 4000],
         "s": [1, 4000],
     }
-    queue = deque([("in", part)])
+    queue: Deque[Tuple[str, Dict[str, List[int]]]] = deque([("in", part)])
     accepted_parts = []
 
     # apply rules in a BFS-style
@@ -57,10 +74,10 @@ def solution(filename: str) -> int:
             accepted_parts.append(part)
             continue
 
-        for rule in workflows[wf]["rules"]:
-            attr, comp, value, workflow = rule.values()
+        for rule_ in workflows[wf].rules:
+            attr, comp, value, workflow = rule_.values()
             if comp == "<":
-                new_part = deepcopy(part)
+                new_part: Parts = deepcopy(part)
                 new_part[attr][1] = min(new_part[attr][1], value - 1)
                 if part[attr][0] <= part[attr][1]:
                     queue.append((workflow, new_part))
@@ -72,15 +89,15 @@ def solution(filename: str) -> int:
                     queue.append((workflow, new_part))
                 part[attr][1] = min(part[attr][1], value)
             else:
-                raise ("blah")
+                raise Exception("something went wrong")
 
         if all(lower <= upper for lower, upper in part.values()):
-            queue.append((workflows[wf]["finally"], part.copy()))
+            queue.append((workflows[wf].final, part.copy()))
 
     # calculate possibilities
-    total_sum = 0
+    total_sum: int = 0
     for part in accepted_parts:
-        total = 1
+        total: int = 1
         for lower, upper in part.values():
             if upper >= lower:
                 total *= upper - lower + 1

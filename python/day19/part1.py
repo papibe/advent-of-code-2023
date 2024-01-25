@@ -1,64 +1,78 @@
 import re
-from collections import deque
+from typing import Dict, List, Match, Optional, Tuple
+
+
+class Workflow:
+    def __init__(self) -> None:
+        self.rules: List[Rule] = []
+        self.final: str = ""
+
+
+class Rule:
+    def __init__(self, attr: str, comp: str, value: int, workflow: str) -> None:
+        self.attr: str = attr
+        self.comp: str = comp
+        self.value: int = value
+        self.workflow: str = workflow
+
+    def values(self) -> Tuple[str, str, int, str]:
+        return (self.attr, self.comp, self.value, self.workflow)
 
 
 def solution(filename: str) -> int:
     with open(filename, "r") as fp:
-        blocks: str = fp.read().split("\n\n")
+        blocks: List[str] = fp.read().split("\n\n")
 
-    workflows_str = blocks[0].splitlines()
-    parts_str = blocks[1].splitlines()
+    workflows_str: List[str] = blocks[0].splitlines()
+    parts_str: List[str] = blocks[1].splitlines()
 
-    workflows = {}
-    wf_regex = r"(\w+){(.*)}"
-    rule_regex = r"(\w)([><])(\d+):(\w+)"
+    workflows: Dict[str, Workflow] = {}
+    wf_regex: str = r"(\w+){(.*)}"
+    rule_regex: str = r"(\w)([><])(\d+):(\w+)"
 
     # parse rules
     for line in workflows_str:
-        match = re.search(wf_regex, line)
-        name = match.group(1)
-        rules = match.group(2).split(",")
+        matches: Optional[Match[str]] = re.search(wf_regex, line)
 
-        workflows[name] = {"rules": [], "finally": ""}
+        assert matches is not None
+        name: str = matches.group(1)
+        rules: List[str] = matches.group(2).split(",")
+
+        workflows[name] = Workflow()
 
         for rule in rules:
-            match = re.search(rule_regex, rule)
-            if match:
-                attr = match.group(1)
-                comp = match.group(2)
-                value = int(match.group(3))
+            matches = re.search(rule_regex, rule)
+            if matches:
+                attr: str = matches.group(1)
+                comp: str = matches.group(2)
+                value: int = int(matches.group(3))
+                workflow: str = matches.group(4)
 
-                wf = match.group(4)
-                workflows[name]["rules"].append(
-                    {
-                        "attr": attr,
-                        "comp": comp,
-                        "value": value,
-                        "workflow": wf,
-                    }
-                )
+                workflows[name].rules.append(Rule(attr, comp, value, workflow))
             else:
-                workflows[name]["finally"] = rule
+                workflows[name].final = rule
 
-    parts = {}
-    prop_regex = r"(\w)=(\d+)"
+    parts: Dict[int, Dict[str, int]] = {}
+    prop_regex: str = r"(\w)=(\d+)"
 
     # parse parts
     for part_number, line in enumerate(parts_str):
-        attributes = line[1:-1].split(",")
+        attributes: List[str] = line[1:-1].split(",")
         parts[part_number] = {}
 
         for attribute in attributes:
-            match = re.search(prop_regex, attribute)
-            attr = match.group(1)
-            value = int(match.group(2))
+            matches = re.search(prop_regex, attribute)
+
+            assert matches is not None
+            attr = matches.group(1)
+            value = int(matches.group(2))
             parts[part_number][attr] = value
 
     accepted_parts = []
 
     # apply rules to all parts
     for part_number, part in parts.items():
-        wf = "in"
+        wf: str = "in"
 
         while True:
             if wf == "R":
@@ -67,21 +81,21 @@ def solution(filename: str) -> int:
                 accepted_parts.append(part_number)
                 break
 
-            for rule in workflows[wf]["rules"]:
-                attr, comp, value, workflow = rule.values()
+            for rule_ in workflows[wf].rules:
+                attr, comp, value, _ = rule_.values()
                 if comp == "<":
                     if part[attr] < value:
-                        wf = rule["workflow"]
+                        wf = rule_.workflow
                         break
                 else:
                     if part[attr] > value:
-                        wf = rule["workflow"]
+                        wf = rule_.workflow
                         break
             else:
-                wf = workflows[wf]["finally"]
+                wf = workflows[wf].final
 
     # calculate sum of attributes
-    total_sum = 0
+    total_sum: int = 0
     for part_number in accepted_parts:
         for k, v in parts[part_number].items():
             total_sum += v
