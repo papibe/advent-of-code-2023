@@ -1,12 +1,14 @@
-import re
 from collections import deque
+from typing import Deque, List, Set, Tuple
 
-GARDEN_PLOT = "."
+GARDEN_PLOT: str = "."
+
+Coords = Tuple[int, int]
 
 
-def solution(filename: str, max_steps) -> int:
+def solution(filename: str, max_steps: int) -> int:
     with open(filename, "r") as fp:
-        garden: str = fp.read().splitlines()
+        garden: List[str] = fp.read().splitlines()
 
     for row, line in enumerate(garden):
         for col, cell in enumerate(line):
@@ -16,8 +18,8 @@ def solution(filename: str, max_steps) -> int:
             continue
         break
 
-    coords = set([(row, col)])
-    queue = deque([(coords, 0)])
+    coords: Set[Coords] = set([(row, col)])
+    queue: Deque[Tuple[Set[Coords], int]] = deque([(coords, 0)])
     while queue:
         coords, steps_count = queue.popleft()
 
@@ -25,13 +27,13 @@ def solution(filename: str, max_steps) -> int:
             break
 
         # RIGHT, LEFT, UP, DOWN
-        steps = [(0, 1), (0, -1), (-1, 0), (1, 0)]
+        steps: List[Coords] = [(0, 1), (0, -1), (-1, 0), (1, 0)]
 
-        next_coords = set()
+        next_coords: Set[Coords] = set()
         for (row, col) in coords:
             for step_row, step_col in steps:
-                new_row = row + step_row
-                new_col = col + step_col
+                new_row: int = row + step_row
+                new_col: int = col + step_col
                 if 0 <= new_row < len(garden) and 0 <= new_col < len(garden[0]):
                     if garden[new_row][new_col] == "#":
                         continue
