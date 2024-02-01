@@ -1,28 +1,28 @@
-import re
 from collections import deque
-from copy import deepcopy
-from collections import defaultdict
+from typing import Deque, Dict, List, Set, Tuple
+
+Coords = Tuple[int, int]
 
 
 def solution(filename: str) -> int:
     with open(filename, "r") as fp:
-        data: str = fp.read().splitlines()
+        data: List[str] = fp.read().splitlines()
 
-    start = (0, 1)
-    goal = (len(data) - 1, len(data[0]) - 2)
+    start: Coords = (0, 1)
+    goal: Coords = (len(data) - 1, len(data[0]) - 2)
 
     ############################################################################
     # get nodes a.k.a. forks, bifurcations
     ############################################################################
-    nodes = []
+    nodes: List[Coords] = []
     for row, line in enumerate(data):
         for col, cell in enumerate(line):
             if cell != "#":
-                direction_steps = [(0, 1), (0, -1), (-1, 0), (1, 0)]
-                bifurcations = 0
+                direction_steps: List[Coords] = [(0, 1), (0, -1), (-1, 0), (1, 0)]
+                bifurcations: int = 0
                 for step_row, step_col in direction_steps:
-                    new_row = row + step_row
-                    new_col = col + step_col
+                    new_row: int = row + step_row
+                    new_col: int = col + step_col
                     if (
                         0 <= new_row < len(data)
                         and 0 <= new_col < len(data[0])
@@ -36,12 +36,14 @@ def solution(filename: str) -> int:
     nodes.append(goal)
 
     ############################################################################
-    def children_distance(start, visited):
-        queue = deque([(start[0], start[1], 0)])
+    def children_distance(
+        start: Coords, visited: Set[Coords]
+    ) -> List[Tuple[int, int, int]]:
+        queue: Deque[Tuple[int, int, int]] = deque([(start[0], start[1], 0)])
         # visited = set([(start[0], start[1])])
         visited.add((start[0], start[1]))
 
-        children = []
+        children: List[Tuple[int, int, int]] = []
 
         while queue:
             row, col, distance = queue.popleft()
@@ -53,9 +55,9 @@ def solution(filename: str) -> int:
             # RIGHT, LEFT, UP, DOWN
             direction_steps = [(0, 1), (0, -1), (-1, 0), (1, 0)]
             for step_row, step_col in direction_steps:
-                new_row = row + step_row
-                new_col = col + step_col
-                new_distance = distance + 1
+                new_row: int = row + step_row
+                new_col: int = col + step_col
+                new_distance: int = distance + 1
 
                 if (
                     0 <= new_row < len(data)
@@ -67,23 +69,25 @@ def solution(filename: str) -> int:
                     visited.add((new_row, new_col))
 
         return children
+
     ############################################################################
 
     ############################################################################
     # create a new compress graph from previous nodes
     ############################################################################
-    nodes_d = {node: {} for node in nodes}
+    nodes_d: Dict[Coords, List[Tuple[int, int, int]]] = {node: [] for node in nodes}
     for node in nodes:
         nodes_d[node] = children_distance(node, set())
 
     ##########################################################################
     # final DFS
     ##########################################################################
-    visited = set()
-    def dfs(start, distance):
+    visited: Set[Coords] = set()
+
+    def dfs(start: Coords, distance: int) -> int:
         if start == goal:
             return distance
-        local_max = float("-inf")
+        local_max: int = float("-inf")  # type: ignore
         visited.add(start)
         for row, col, new_distance in nodes_d[start]:
             if (row, col) not in visited:
@@ -91,8 +95,7 @@ def solution(filename: str) -> int:
         visited.remove(start)
         return local_max
 
-
-    max_distance = dfs(start, 0)
+    max_distance: int = dfs(start, 0)
 
     return max_distance
 
