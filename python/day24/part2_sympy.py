@@ -1,10 +1,15 @@
+from typing import List, Tuple
+
 import sympy
+
+Hailstone = Tuple[int, int, int, int, int, int]
+
 
 def solution(filename: str) -> int:
     with open(filename, "r") as fp:
-        data: str = fp.read().splitlines()
+        data: List[str] = fp.read().splitlines()
 
-    hails = []
+    hails: List[Hailstone] = []
     for line in data:
         position, velocity = line.split(" @ ")
         x, y, z = position.split(", ")
@@ -34,7 +39,7 @@ def solution(filename: str) -> int:
             break
 
     solution = sympy.solve(equations)
-    return solution[0][x] + solution[0][y] + solution[0][z]
+    return int(solution[0][x]) + int(solution[0][y]) + int(solution[0][z])
 
 
 if __name__ == "__main__":

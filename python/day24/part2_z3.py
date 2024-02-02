@@ -1,10 +1,15 @@
+from typing import List, Tuple
+
 import z3
+
+Hailstone = Tuple[int, int, int, int, int, int]
+
 
 def solution(filename: str) -> int:
     with open(filename, "r") as fp:
-        data: str = fp.read().splitlines()
+        data: List[str] = fp.read().splitlines()
 
-    hails = []
+    hails: List[Hailstone] = []
     for line in data:
         position, velocity = line.split(" @ ")
         x, y, z = position.split(", ")
@@ -29,10 +34,10 @@ def solution(filename: str) -> int:
         solver.add(y + dy * time[i] == dya * time[i] + ya)
         solver.add(z + dz * time[i] == dza * time[i] + za)
 
-    solution = solver.check()
+    solver.check()
     model = solver.model()
 
-    return model.eval(x + y + z)
+    return int(model.eval(x + y + z).as_long())
 
 
 if __name__ == "__main__":

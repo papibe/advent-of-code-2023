@@ -1,8 +1,13 @@
-def solution(filename: str, lower, high) -> int:
-    with open(filename, "r") as fp:
-        data: str = fp.read().splitlines()
+from typing import List, Tuple
 
-    hailstones = []
+Hailstone = Tuple[int, int, int, int, int, int]
+
+
+def solution(filename: str, lower: int, high: int) -> int:
+    with open(filename, "r") as fp:
+        data: List[str] = fp.read().splitlines()
+
+    hailstones: List[Hailstone] = []
     for line in data:
         position, velocity = line.split(" @ ")
         x, y, z = position.split(", ")
@@ -10,7 +15,7 @@ def solution(filename: str, lower, high) -> int:
         hailstones.append((int(x), int(y), int(z), int(dx), int(dy), int(dz)))
 
     number_of_hailstones = len(hailstones)
-    intersections = 0
+    intersections: int = 0
     for i in range(number_of_hailstones):
         for j in range(i + 1, number_of_hailstones):
 
@@ -20,14 +25,14 @@ def solution(filename: str, lower, high) -> int:
             xa, ya, _, dxa, dya, _ = hailstones[i]
             xb, yb, _, dxb, dyb, _ = hailstones[j]
 
-            ma = dya / dxa
-            mb = dyb / dxb
-            ca = ya - ma * xa
-            cb = yb - mb * xb
+            ma: float = dya / dxa
+            mb: float = dyb / dxb
+            ca: float = ya - ma * xa
+            cb: float = yb - mb * xb
 
             if ma != mb:
-                xi = (cb - ca) / (ma - mb)
-                yi = (xi * ma) + ca
+                xi: float = (cb - ca) / (ma - mb)
+                yi: float = (xi * ma) + ca
 
                 if (
                     lower <= xi <= high
