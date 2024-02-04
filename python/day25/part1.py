@@ -1,75 +1,75 @@
-from collections import deque, defaultdict
-from itertools import combinations
-from copy import deepcopy
+from collections import defaultdict, deque
+from typing import DefaultDict, Deque, Dict, List, Set, Tuple
 
 
 def solution(filename: str) -> int:
     with open(filename, "r") as fp:
-        data: str = fp.read().splitlines()
+        data: List[str] = fp.read().splitlines()
 
-    all_components = {}
-    connections = {}
+    all_components: Dict[str, bool] = {}
+    connections: Dict[str, List[str]] = {}
     for line in data:
         main_component, rest = line.split(": ")
-        other_components = rest.split(" ")
+        other_components: List[str] = rest.split(" ")
         all_components[main_component] = True
         for other_component in other_components:
             all_components[other_component] = True
 
         connections[main_component] = other_components
 
-    al = defaultdict(list)
+    adjacency_list: DefaultDict[int, List[int]] = defaultdict(list)
 
-    components = list(all_components.keys())
-    cm = {}
+    components: List[str] = list(all_components.keys())
+    byjection: Dict[str, int] = {}
     for index, component in enumerate(components):
-        cm[component] = index
+        byjection[component] = index
 
     for node, connected_nodes in connections.items():
         for connected_node in connected_nodes:
-            al[cm[node]].append(cm[connected_node])
-            al[cm[connected_node]].append(cm[node])
+            adjacency_list[byjection[node]].append(byjection[connected_node])
+            adjacency_list[byjection[connected_node]].append(byjection[node])
 
-    size = len(all_components)
+    size: int = len(all_components)
 
-    counter = defaultdict(int)
+    counter: DefaultDict[Tuple[int, int], int] = defaultdict(int)
 
     for source in range(size):
-        q = deque([source])
-        visited = set([source])
-        previous = {}
+        q: Deque[int] = deque([source])
+        visited: Set[int] = set([source])
+        previous: Dict[int, int] = {}
         while q:
-            node = q.popleft()
+            node_: int = q.popleft()
 
-            for next_node in al[node]:
+            for next_node in adjacency_list[node_]:
                 if next_node not in visited:
-                    # counter[(min(node, next_node), max(node, next_node))] += 1
-                    previous[next_node] = node
+                    previous[next_node] = node_
                     q.append(next_node)
                     visited.add(next_node)
 
-        for node in range(size):
-            while node != source:
-                prev = previous[node]
-                counter[(min(node, prev), max(node, prev))] += 1
-                node = prev
+        for node_ in range(size):
+            while node_ != source:
+                prev: int = previous[node_]
+                counter[(min(node_, prev), max(node_, prev))] += 1
+                node_ = prev
 
-    top_nodes = sorted(counter.items(), key=lambda x: x[1], reverse=True)
-    # for (n1, n2), count in top_nodes[:7]:
-    #     print(components[n1], components[n2], count)
+    top_nodes: List[Tuple[Tuple[int, int], int]] = sorted(
+        counter.items(), key=lambda x: x[1], reverse=True
+    )
 
-    for (n1, n2), _ in top_nodes[:3]:
-        al[n1].remove(n2)
-        al[n2].remove(n1)
+    node1: int
+    node2: int
+    for (node1, node2), _ in top_nodes[:3]:
+        adjacency_list[node1].remove(node2)
+        adjacency_list[node2].remove(node1)
 
     source = 0
-    q = deque([source])
+    queue: Deque[int] = deque([source])
     visited = set([source])
-    while q:
-        node = q.popleft()
-        for next_node in al[node]:
+    while queue:
+        node_ = queue.popleft()
+        for next_node in adjacency_list[node_]:
             if next_node not in visited:
-                q.append(next_node)
+                queue.append(next_node)
                 visited.add(next_node)
 
     return len(visited) * (size - len(visited))
