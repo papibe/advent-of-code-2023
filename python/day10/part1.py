@@ -33,15 +33,8 @@ def solution(filename: str) -> int:
     queue: Deque[Tuple[int, int, int]] = deque([(start_row, start_col, 0)])
     visited: Set[Tuple[int, int]] = set([(start_row, start_col)])
 
-    counted = []
-    for line in data:
-        counted.append([char for char in line])
-
-    max_steps: int = 0
     while queue:
         row, col, steps = queue.popleft()
-        counted[row][col] = str(steps)
-        max_steps = max(max_steps, steps)
 
         for (nrow, ncol) in landscape[data[row][col]]:
             new_row: int = row + nrow

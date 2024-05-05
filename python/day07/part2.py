@@ -19,14 +19,6 @@ CARD_VALUES: Dict[str, int] = {
     "2": 2,
 }
 
-FIVE_OF_A_KIND: int = 7
-FOUR_OF_A_KIND: int = 6
-FULL_HOUSE: int = 5
-THREE_OF_A_KIND: int = 4
-TWO_PAIRS: int = 3
-ONE_PAIR: int = 2
-HIGH_CARD: int = 1
-
 JOKER: str = "J"
 
 
@@ -39,8 +31,12 @@ def hand_type(hand: str) -> List[int]:
         else:
             freq[card] = freq.get(card, 0) + 1
 
-    # JJJJJ => repeats will be empty thus '+ [0]' ensures first value
-    repeats = sorted(freq.values(), reverse=True) + [0]
+    repeats = sorted(freq.values(), reverse=True)
+
+    # JJJJJ => repeats will be empty
+    if not repeats:
+        return [jokers]
+
     repeats[0] += jokers
 
     return repeats
